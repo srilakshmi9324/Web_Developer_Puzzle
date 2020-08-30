@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { getReadingList, removeFromReadingList } from '@tmo/books/data-access';
+import { getReadingList, removeFromReadingList,toggleMarkedAsRead,
+  undoToggledMarkedAsRead } from '@tmo/books/data-access';
+import { ReadingListItem } from '@tmo/shared/models';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'tmo-reading-list',
@@ -10,9 +14,22 @@ import { getReadingList, removeFromReadingList } from '@tmo/books/data-access';
 export class ReadingListComponent {
   readingList$ = this.store.select(getReadingList);
 
-  constructor(private readonly store: Store) {}
+  constructor(private readonly store: Store
+    , private snackBar: MatSnackBar) {}
 
   removeFromReadingList(item) {
     this.store.dispatch(removeFromReadingList({ item }));
+  }
+  toggleMarkedAsRead(item: ReadingListItem) {
+    const readStatus = item.finished ? 'unread' : 'read';
+    const message = `${item.title} marked as ${readStatus}`;
+    this.store.dispatch(toggleMarkedAsRead({ item }));
+
+    const snackBarRef = this.snackBar.open(message, 'Undo', { duration: 5000 });
+
+    snackBarRef
+      .onAction()
+      .pipe(take(1))
+      .subscribe(() => this.store.dispatch(undoToggledMarkedAsRead({ item })));
   }
 }

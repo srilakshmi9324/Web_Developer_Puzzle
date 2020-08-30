@@ -1,12 +1,25 @@
 <ng-container *ngIf="(readingList$ | async).length > 0; else empty">
   <div class="reading-list-item" *ngFor="let b of readingList$ | async">
     <div>
+      <button
+        mat-icon-button
+        [color]="b.finished ? 'primary' : null"
+        [attr.aria-label]="'Mark ' + b.title + ' as read/finished'"
+        (click)="toggleMarkedAsRead(b)"
+      >
+        <mat-icon>{{ b.finished ? 'star' : 'star_outline' }}</mat-icon>
+      </button>
+    </div>
+    <div>
       <img class="reading-list-item--cover" [src]="b.coverUrl"  [attr.alt]="b.title + 'Book Cover'"/>
     </div>
     <div class="reading-list-item--details">
       <strong class="reading-list-item--details--title">{{ b.title }}</strong>
       <div class="reading-list-item--details--author">
         {{ b.authors.join(',') }}
+      </div>
+      <div *ngIf="b.finished" class="reading-list-item--details--finished">
+        <em>Finished: {{ b.finishedDate | date: 'medium' }}</em>
       </div>
     </div>
     <div>
