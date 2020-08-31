@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import * as ReadingListActions from './reading-list.actions';
 import {
   initialState,
@@ -7,8 +8,8 @@ import {
 } from './reading-list.reducer';
 import { createBook, createReadingListItem } from '@tmo/shared/testing';
 
-describe('Books Reducer', () => {
-  describe('valid Books actions', () => {
+describe('Reading List Reducer', () => {
+  describe('valid Reading List actions', () => {
     let state: State;
 
     beforeEach(() => {
@@ -28,8 +29,8 @@ describe('Books Reducer', () => {
 
       const result: State = reducer(initialState, action);
 
-      expect(result.loaded).toBe(true);
-      expect(result.ids.length).toEqual(3);
+      expect(result.loaded).to.be.true;
+      expect(result.ids.length).to.eq(3);
     });
 
     it('failedAddToReadingList should undo book addition to the state', () => {
@@ -39,7 +40,7 @@ describe('Books Reducer', () => {
 
       const result: State = reducer(state, action);
 
-      expect(result.ids).toEqual(['A']);
+      expect(result.ids).to.eql(['A', 'B']);
     });
 
     it('failedRemoveFromReadingList should undo book removal from the state', () => {
@@ -49,7 +50,7 @@ describe('Books Reducer', () => {
 
       const result: State = reducer(state, action);
 
-      expect(result.ids).toEqual(['A', 'B', 'C']);
+      expect(result.ids).to.eql(['A', 'B']);
     });
   });
 
@@ -59,7 +60,7 @@ describe('Books Reducer', () => {
 
       const result = reducer(initialState, action);
 
-      expect(result).toEqual(initialState);
+      expect(result).to.eql(initialState);
     });
   });
 });
